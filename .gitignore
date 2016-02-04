@@ -2,8 +2,9 @@
 # matches "bin" in any subfolder
 bin/
 
-# ignore all target directories
+# ignore target and build directories
 target/
+build/
 
 # ignore all files ending with ~
 *~ 
@@ -13,4 +14,5 @@ target/
 .settings/
 .classpath
 .project
+
 

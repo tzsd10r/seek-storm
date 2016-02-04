@@ -8,21 +8,20 @@
  *  consent of OCLC, Inc.  Duplication of any portion of these  materials shall include his notice.
  *
  */
+buildscript {
+    repositories { jcenter() }
+    dependencies { classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2' }
+}
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'pmd'
 apply plugin: 'findbugs'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = 1.7
 version = '1.0'
-
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'storm spike',
-        'Implementation-Version': version
-    }
-}
+buildDir = 'target'
 
 ext {
     repos = [
@@ -53,6 +52,11 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
 dependencies {
     // commons
     compile 'commons-collections:commons-collections:3.2'
@@ -67,7 +71,7 @@ dependencies {
     // storm
     compile 'org.apache.storm:storm-hdfs:0.10.0-beta1'
     compile 'org.apache.storm:storm-kafka:0.10.0-beta1'
-    compile ('org.apache.storm:storm-core:0.10.0') {
+    provided ('org.apache.storm:storm-core:0.10.0') {
         exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     }
 
@@ -88,26 +92,29 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // plugins
-    compile('com.google.code.findbugs:findbugs:3.0.1')
+    compile 'com.google.code.findbugs:findbugs:3.0.1'
 }
-
-//test { systemProperties 'property': 'value' }
 
 findbugs { ignoreFailures = true }
 
 pmd { ignoreFailures = true }
 
-// tasks
-defaultTasks 'build'
+defaultTasks 'clean', 'build', 'shadowJar'
 
-build {
-    
+shadowJar {
+    baseName = project.name + '-uber'
+    classifier = ''
+    dependencies { exclude dependency('org.apache.storm:storm-core:0.10.0') }
+    mergeServiceFiles()
 }
 
-task compile << { println 'compiling source' }
-
-task compileTest(dependsOn: compile) << { println 'compiling unit tests' }
-
-//task test(dependsOn: [compile, compileTest]) << { println 'running unit tests' }
-
-task dist(dependsOn: [compile, test]) << { println 'building the distribution' }
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'storm spike',
+        'Implementation-Version': version,
+        'Built-By': System.getProperty('user.name'),
+        'Built-Date': new Date(),
+        'Built-JDK': System.getProperty('java.version'),
+        'Main-Class': 'org.oclc.seek.storm.Topology'
+    }
+}
