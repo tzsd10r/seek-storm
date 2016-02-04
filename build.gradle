@@ -1,0 +1,113 @@
+/*
+ *
+ *  Copyright (c) 2016 OCLC, Inc. All Rights Reserved.
+ *
+ *  OCLC proprietary information: the enclosed materials contain
+ *  proprietary information of OCLC, Inc. and shall not be disclosed in whole or in
+ *  any part to any third party or used by any person for any purpose, without written
+ *  consent of OCLC, Inc.  Duplication of any portion of these  materials shall include his notice.
+ *
+ */
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'pmd'
+apply plugin: 'findbugs'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'storm spike',
+        'Implementation-Version': version
+    }
+}
+
+ext {
+    repos = [
+        snapshot: [
+            url     : "http://snapshots.dev.oclc.org/archiva/repository/snapshots",
+            //username: project.snapshotRepoUserName,
+            //password: project.snapshotRepoPassword
+        ],
+        release : [
+            url     : "http://releases.dev.oclc.org/archiva/repository/releases",
+            //username: project.releaseRepoUserName,
+            //password: project.releaseRepoPassword
+        ],
+        legacy: [
+            url: "http://snapshots.dev.oclc.org/archiva/repository/internal"
+        ]
+    ]
+}
+
+repositories {
+    mavenLocal()
+    repos.each { repoName, repo ->
+        maven {
+            name repoName
+            url repo.url
+        }
+    }
+    mavenCentral()
+}
+
+dependencies {
+    // commons
+    compile 'commons-collections:commons-collections:3.2'
+    compile 'commons-io:commons-io:2.4'
+    compile 'commons-beanutils:commons-beanutils:1.9.2'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'org.apache.commons:commons-pool2:2.4.2'
+
+    // solr
+    compile 'org.apache.solr:solr-solrj:5.3.1'
+
+    // storm
+    compile 'org.apache.storm:storm-hdfs:0.10.0-beta1'
+    compile 'org.apache.storm:storm-kafka:0.10.0-beta1'
+    compile ('org.apache.storm:storm-core:0.10.0') {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
+
+    // kafka
+    compile ('org.apache.kafka:kafka_2.9.1:0.8.2.1') {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
+
+    // json
+    compile 'com.googlecode.json-simple:json-simple:1.1'
+
+    // logging
+    compile 'org.apache.logging.log4j:log4j-api:2.3'
+    compile 'org.apache.logging.log4j:log4j-core:2.3'
+
+    // test
+    testCompile 'org.easymock:easymock:3.4'
+    testCompile 'junit:junit:4.12'
+
+    // plugins
+    compile('com.google.code.findbugs:findbugs:3.0.1')
+}
+
+//test { systemProperties 'property': 'value' }
+
+findbugs { ignoreFailures = true }
+
+pmd { ignoreFailures = true }
+
+// tasks
+defaultTasks 'build'
+
+build {
+    
+}
+
+task compile << { println 'compiling source' }
+
+task compileTest(dependsOn: compile) << { println 'compiling unit tests' }
+
+//task test(dependsOn: [compile, compileTest]) << { println 'running unit tests' }
+
+task dist(dependsOn: [compile, test]) << { println 'building the distribution' }
