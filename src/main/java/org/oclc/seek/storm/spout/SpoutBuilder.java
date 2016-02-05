@@ -8,7 +8,6 @@
 
 package org.oclc.seek.storm.spout;
 
-import java.util.ArrayList;
 import java.util.Properties;
 
 import storm.kafka.BrokerHosts;
@@ -34,11 +33,10 @@ public class SpoutBuilder {
     }
 
     public KafkaSpout buildKafkaSpout() {
-
-        ZkHosts hosts = new ZkHosts(configs.getProperty(KAFKA_ZOOKEEPER_HOSTS));
+        BrokerHosts hosts = new ZkHosts(configs.getProperty(KAFKA_ZOOKEEPER_HOSTS));
         String topic = configs.getProperty(KAFKA_TOPIC);
-        String zkRoot = configs.getProperty(KAFKA_ZKROOT); // the root path in Zookeeper for the spout to store the
-        // consumer offsets
+        // the root path in Zookeeper for the spout to store the consumer offsets
+        String zkRoot = configs.getProperty(KAFKA_ZKROOT);
         String groupId = configs.getProperty(KAFKA_CONSUMERGROUP);
         SpoutConfig spoutConfig = new SpoutConfig(hosts, topic, zkRoot, groupId);
 
