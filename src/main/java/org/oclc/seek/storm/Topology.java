@@ -36,15 +36,15 @@ public class Topology {
     public static final String HDFS_STREAM = "hdfs-stream";
 
     private static final String KAFKA_SPOUT_COUNT = "kafka.spout.count";
-    private static final String KAFKA_SPOUT_ID = "kafka.spout";
-    private static final String SINK_TYPE_BOLT_ID = "sink.type.bolt";
+    private static final String KAFKA_SPOUT_ID = "kafka.spout.id";
+    private static final String SINK_TYPE_BOLT_ID = "sink.type.bolt.id";
     private static final String SINK_BOLT_COUNT = "sink.bolt.count";
 
-    private static final String SOLR_BOLT_ID = "solr.bolt";
+    private static final String SOLR_BOLT_ID = "solr.bolt.id";
     private static final String SOLR_BOLT_COUNT = "solr.bolt.count";
     private static final String SOLR_ZOOKEEPER_HOSTS = "solr.zookeeper.hosts";
 
-    private static final String HDFS_BOLT_ID = "hdfs.bolt";
+    private static final String HDFS_BOLT_ID = "hdfs.bolt.id";
     private static final String HDFS_BOLT_COUNT = "hdfs.bolt.count";
 
     private static final String TOPOLOGY_NAME = "topology";

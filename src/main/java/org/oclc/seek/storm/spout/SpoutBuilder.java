@@ -10,6 +10,7 @@ package org.oclc.seek.storm.spout;
 
 import java.util.Properties;
 
+import kafka.api.OffsetRequest;
 import storm.kafka.BrokerHosts;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
@@ -39,6 +40,8 @@ public class SpoutBuilder {
         String zkRoot = configs.getProperty(KAFKA_ZKROOT);
         String groupId = configs.getProperty(KAFKA_CONSUMERGROUP);
         SpoutConfig spoutConfig = new SpoutConfig(hosts, topic, zkRoot, groupId);
+        spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
+        // spoutConfig.startOffsetTime = OffsetRequest.LatestTime();
 
         // ArrayList<String> list = new ArrayList<String>();
         // list.add("ilabhddb03dxdu.dev.oclc.org");
@@ -48,7 +51,6 @@ public class SpoutBuilder {
         // spoutConfig.zkPort = new Integer(9011);
         // spoutConfig.zkRoot = "/brokers";
 
-        spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
         KafkaSpout kafkaSpout = new KafkaSpout(spoutConfig);
         return kafkaSpout;
     }
